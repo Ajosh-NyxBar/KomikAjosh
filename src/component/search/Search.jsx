@@ -9,8 +9,8 @@ const Search = () => {
   const [characterData, setCharacterData] = useState(null);
   const [comicData, setComicData] = useState(null);
 
-  const publicKey = import.meta.env.VITE_PUBLIC_KEY;
-  const privateKey = import.meta.env.VITE_PRIVATE_KEY;
+  const publicKey = "44e236a046b901b72497eef8f65e5295";
+  const privateKey = "9fb25831e47a8d11538088defc506a781ca6a3d4";
 
   const handleSubmit = (e) => {
     e.preventDefault();
