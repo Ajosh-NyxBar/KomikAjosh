@@ -1,9 +1,11 @@
 import { useState } from "react";
 import "./Search.scss";
 import md5 from "md5";
+import Character from "./Character";
+import Comics from "../Comics/Comics";
 
 const Search = () => {
-  const [character, setCharacter] = useState('');
+  const [character, setCharacter] = useState("");
   const [characterData, setCharacterData] = useState(null);
   const [comicData, setComicData] = useState(null);
 
@@ -30,9 +32,34 @@ const Search = () => {
 
     fetch(url)
       .then((response) => response.json())
-      .then((data) => {
-        setCharacterData(data.data.results[0]);
-        console.log(data.data.results[0]);
+      .then((result) => {
+        console.log(result.data);
+        setCharacterData(result.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching character data:", error);
+      });
+  };
+
+  const getComicData = (characterId) => {
+    console.log("Fetching comics for character ID:", characterId);
+    window.scrollTo({ top: 0, left: 0 });
+
+    const timestamp = new Date().getTime();
+    const hash = generateHash(timestamp);
+
+    const url = `https://gateway.marvel.com:443/v1/public/characters/${characterId}/comics?apikey=${publicKey}&hash=${hash}&ts=${timestamp}`;
+    console.log("Fetching URL:", url);
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("Comic data response:", result);
+        setComicData(result.data);
+        console.log(result.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching comic data:", error);
       });
   };
 
@@ -41,7 +68,7 @@ const Search = () => {
   };
 
   const handleReset = (e) => {
-    setCharacter('');
+    setCharacter("");
     setCharacterData(null);
     setComicData(null);
   };
@@ -62,6 +89,17 @@ const Search = () => {
           </button>
         </div>
       </form>
+
+      {!comicData &&
+        characterData &&
+        Array.isArray(characterData.results) &&
+        characterData.results.length > 0 && (
+          <Character data={characterData.results} onClick={getComicData} />
+        )}
+
+      {comicData &&
+        Array.isArray(comicData.results) &&
+        comicData.results[0] && <Comics data={comicData.results} />}
     </>
   );
 };
